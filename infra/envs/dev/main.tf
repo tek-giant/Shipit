@@ -55,3 +55,13 @@ output "private_app_subnet_ids" {
 output "private_data_subnet_ids" {
   value = module.vpc.private_data_subnet_ids
 }
+
+module "ecr_orders_api" {
+  source = "../../modules/ecr"
+
+  name = "shipit/orders-api"
+}
+
+output "orders_api_repository_url" {
+  value = module.ecr_orders_api.repository_url
+}
