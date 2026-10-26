@@ -1,0 +1,9 @@
+target/
+.terraform/
+*.tfstate*
+*.tfvars.secret
+.env
+*.pem
+.idea/
+.vscode/
+__pycache__/
