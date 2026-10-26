@@ -37,7 +37,7 @@ module "vpc" {
   name       = "shipit-dev"
   cidr       = "10.10.0.0/16"
   azs        = ["eu-west-2a", "eu-west-2b"]
-  enable_nat = false
+  enable_nat = var.enable_nat
 }
 
 output "vpc_id" {
@@ -64,4 +64,10 @@ module "ecr_orders_api" {
 
 output "orders_api_repository_url" {
   value = module.ecr_orders_api.repository_url
+}
+
+variable "enable_nat" {
+  description = "Create the NAT gateway (costs money; only needed while the app runs)"
+  type        = bool
+  default     = false
 }
