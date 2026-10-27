@@ -66,4 +66,12 @@ resource "aws_ecs_service" "orders_api" {
   }
 
   depends_on = [aws_lb_listener.http]
+
+
+
+  lifecycle {
+    # Jenkins deploys new task definition revisions; Terraform must not roll them back
+    ignore_changes = [task_definition]
+  }
 }
+
