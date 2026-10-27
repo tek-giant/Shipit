@@ -9,4 +9,7 @@ RUN apt-get update \
 COPY --from=docker:27-cli /usr/local/bin/docker /usr/local/bin/docker
 COPY --from=docker:27-cli /usr/local/libexec/docker/cli-plugins/docker-buildx /usr/local/lib/docker/cli-plugins/docker-buildx
 
+# Jenkins runs as root here, so trust the workspace folders
+RUN git config --system --add safe.directory '*'
+
 USER jenkins
