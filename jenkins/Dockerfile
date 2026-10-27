@@ -2,7 +2,7 @@ FROM jenkins/jenkins:lts-jdk17
 
 USER root
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends maven \
+    && apt-get install -y --no-install-recommends maven awscli \
     && rm -rf /var/lib/apt/lists/*
 
 # Docker command-line tools (the client only; the engine is on your Mac)
