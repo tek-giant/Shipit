@@ -4,7 +4,7 @@
 .DESCRIPTION
     Release tags have no hyphen (0.1.2); pipeline build tags do (abc1234-12).
     Exit codes: 0 = no stale images, 1 = at least one image older than -MaxAgeDays,
-                2 = the input file could not be read.
+                2 = the input file could not be read or parsed.
 #>
 [CmdletBinding()]
 param(
@@ -25,18 +25,18 @@ function Get-ImageKind {
 
 function ConvertTo-ImageSummary {
     param($Image, [datetime]$Now)
-    $tags = @($Image.imageTags)
+    $tags = @($Image.imageTags | Where-Object { $_ })
     $pushed = [datetime]::Parse($Image.imagePushedAt).ToUniversalTime()
     [pscustomobject]@{
         Kind    = Get-ImageKind -Tags $tags
-        Tags    = if ($tags.Count) { $tags -join ',' } else { '<untagged>' }
-        SizeMB  = [math]::Round($Image.imageSizeInBytes / 1MB, 1)
+        Tags    = if ($tags.Count -gt 0) { $tags -join ',' } else { '<untagged>' }
+        SizeMB  = [math]::Round($Image.imageSizeInBytes / 1000000, 1)
         AgeDays = [int][math]::Floor(($Now.ToUniversalTime() - $pushed).TotalDays)
     }
 }
 
 try {
-    $images = Get-Content -Raw -Path $Path | ConvertFrom-Json -ErrorAction Stop
+    $images = Get-Content -Raw -Path $Path -ErrorAction Stop | ConvertFrom-Json -ErrorAction Stop
 }
 catch {
     Write-Error "Could not read '$Path': $($_.Exception.Message)"
