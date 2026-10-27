@@ -10,3 +10,6 @@ __pycache__/
 
 # Terraform variable files can hold personal values
 *.tfvars
+
+# Built Lambda packages
+.build/
