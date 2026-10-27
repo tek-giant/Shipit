@@ -1,0 +1,13 @@
+services:
+  jenkins:
+    build: .
+    image: shipit-jenkins:1
+    container_name: jenkins
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+
+volumes:
+  jenkins_home:
