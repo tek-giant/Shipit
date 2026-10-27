@@ -1,0 +1,6 @@
+[
+  { "imageTags": ["0.1.0"], "imageSizeInBytes": 88268058, "imagePushedAt": "2026-10-20T10:00:00+00:00" },
+  { "imageTags": ["0.1.2"], "imageSizeInBytes": 88751178, "imagePushedAt": "2026-10-26T10:00:00+00:00" },
+  { "imageTags": ["abc1234-5", "abc1234-6"], "imageSizeInBytes": 88751167, "imagePushedAt": "2026-10-27T08:30:00+00:00" },
+  { "imageSizeInBytes": 1558, "imagePushedAt": "2026-10-01T09:00:00+00:00" }
+]
