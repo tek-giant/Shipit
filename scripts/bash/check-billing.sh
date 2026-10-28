@@ -3,14 +3,21 @@
 # Exit codes: 0 = all clear, 1 = something is still running, 2 = could not check.
 set -uo pipefail
 
-PROFILE="${AWS_PROFILE:-shipit}"
 REGION="${AWS_REGION:-eu-west-2}"
 export AWS_PAGER=""
 
-aws_cmd() { aws --profile "$PROFILE" --region "$REGION" "$@"; }
+# Use a named profile if one is set; otherwise use credentials from the environment
+# (which is how Jenkins provides them).
+aws_cmd() {
+  if [ -n "${AWS_PROFILE:-}" ]; then
+    aws --profile "$AWS_PROFILE" --region "$REGION" "$@"
+  else
+    aws --region "$REGION" "$@"
+  fi
+}
 
 if ! aws_cmd sts get-caller-identity > /dev/null 2>&1; then
-  echo "ERROR: cannot reach AWS with profile '$PROFILE'. Try: aws sso login --profile $PROFILE" >&2
+  echo "ERROR: cannot reach AWS. On a laptop try: aws sso login --profile shipit" >&2
   exit 2
 fi
 
