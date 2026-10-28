@@ -7,7 +7,8 @@ pipeline {
     }
 
     environment {
-        AWS_REGION = 'eu-west-2'
+        AWS_REGION       = 'eu-west-2'
+        ALERTS_TOPIC_ARN = 'arn:aws:sns:eu-west-2:743978812281:shipit-dev-alerts'
     }
 
     stages {
@@ -18,15 +19,23 @@ pipeline {
                     usernameVariable: 'AWS_ACCESS_KEY_ID',
                     passwordVariable: 'AWS_SECRET_ACCESS_KEY'
                 )]) {
-                    sh './scripts/bash/check-billing.sh'
+                    script {
+                        def code = sh(script: './scripts/bash/check-billing.sh', returnStatus: true)
+
+                        if (code == 1) {
+                            sh """aws sns publish --topic-arn "\$ALERTS_TOPIC_ARN" \\
+                                  --subject "Shipit: billable AWS resources still running" \\
+                                  --message "The daily billing check found resources that cost money by the hour. See ${env.BUILD_URL}console" """
+                            error('Billable resources are still running')
+                        } else if (code != 0) {
+                            sh """aws sns publish --topic-arn "\$ALERTS_TOPIC_ARN" \\
+                                  --subject "Shipit: billing check could not run" \\
+                                  --message "The check itself failed (exit code ${code}), so nothing is confirmed clear. See ${env.BUILD_URL}console" """
+                            error("Billing check could not run (exit code ${code})")
+                        }
+                    }
                 }
             }
-        }
-    }
-
-    post {
-        failure {
-            echo 'Billable resources are still running, or the check could not run. See the log above.'
         }
     }
 }

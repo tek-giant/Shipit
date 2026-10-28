@@ -101,3 +101,17 @@ resource "aws_iam_user_policy" "jenkins_billing_check" {
   user   = aws_iam_user.jenkins.name
   policy = data.aws_iam_policy_document.jenkins_billing_check.json
 }
+
+data "aws_iam_policy_document" "jenkins_publish_alerts" {
+  statement {
+    sid       = "PublishToAlertsTopicOnly"
+    actions   = ["sns:Publish"]
+    resources = [aws_sns_topic.alerts.arn]
+  }
+}
+
+resource "aws_iam_user_policy" "jenkins_publish_alerts" {
+  name   = "publish-alerts-topic"
+  user   = aws_iam_user.jenkins.name
+  policy = data.aws_iam_policy_document.jenkins_publish_alerts.json
+}
