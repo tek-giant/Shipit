@@ -13,3 +13,11 @@ __pycache__/
 
 # Built Lambda packages
 .build/
+
+# Python
+.venv/
+__pycache__/
+
+# Python
+.venv/
+__pycache__/

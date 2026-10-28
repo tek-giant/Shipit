@@ -77,3 +77,27 @@ resource "aws_iam_user_policy" "jenkins_deploy" {
   user   = aws_iam_user.jenkins.name
   policy = data.aws_iam_policy_document.jenkins_deploy.json
 }
+
+data "aws_iam_policy_document" "jenkins_billing_check" {
+  # Read-only: every action below only lists or describes, none can change anything.
+  # These APIs do not support resource-level limits, so they must use "*".
+  statement {
+    sid = "ListBillableResources"
+    actions = [
+      "elasticloadbalancing:DescribeLoadBalancers",
+      "ec2:DescribeNatGateways",
+      "ec2:DescribeInstances",
+      "ec2:DescribeAddresses",
+      "ecs:ListClusters",
+      "ecs:ListTasks",
+      "rds:DescribeDBInstances",
+    ]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_user_policy" "jenkins_billing_check" {
+  name   = "billing-check-read-only"
+  user   = aws_iam_user.jenkins.name
+  policy = data.aws_iam_policy_document.jenkins_billing_check.json
+}
